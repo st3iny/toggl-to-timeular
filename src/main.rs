@@ -89,7 +89,7 @@ async fn main() -> Result<()> {
             log::debug!("{activity_mappings:#?}");
 
             let mut unmapped_entries = Vec::new();
-
+            let mut imported_count = 0;
             for export in toggl_exports {
                 let mut reader = csv::Reader::from_path(export)?;
                 for record in reader.deserialize() {
@@ -130,6 +130,8 @@ async fn main() -> Result<()> {
                     };
                     log::debug!("{request:#?}");
 
+                    imported_count += 1;
+
                     if dry_run {
                         log::info!("Would have imported: {request:#?}");
                         continue;
@@ -142,9 +144,15 @@ async fn main() -> Result<()> {
 
             if !unmapped_entries.is_empty() {
                 log::warn!(
-                    "Skipped {} time entries: {unmapped_entries:#?}",
+                    "Skipped {} time entries without a mapping: {unmapped_entries:#?}",
                     unmapped_entries.len(),
                 );
+            }
+
+            if dry_run {
+                log::info!("Would have imported {imported_count} time entries");
+            } else {
+                log::info!("Imported {imported_count} time entries");
             }
         }
     }
