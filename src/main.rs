@@ -4,15 +4,15 @@ use std::{
     path::Path,
 };
 
-use activity::ActivityMapping;
 use anyhow::{anyhow, Context, Result};
 use chrono_tz::Tz;
 use clap::Parser;
 
+use crate::mapping::ActivityMapper;
 use crate::timeular::{Note, SignInRequest, TimeularClient};
 use crate::toggl::TogglTimeEntry;
 
-mod activity;
+mod mapping;
 mod timeular;
 mod toggl;
 
@@ -85,8 +85,7 @@ async fn main() -> Result<()> {
                 .parse()
                 .map_err(|err| anyhow!("Failed to parse time zone: {err}"))?;
 
-            let activity_mappings = ActivityMapping::parse(activity_mappings)?;
-            log::debug!("{activity_mappings:#?}");
+            let activity_mapper = ActivityMapper::parse(activity_mappings)?;
 
             let mut unmapped_entries = Vec::new();
             let mut imported_count = 0;
@@ -104,9 +103,7 @@ async fn main() -> Result<()> {
                         continue;
                     }
 
-                    let activity_id = activity_mappings
-                        .iter()
-                        .find_map(|mapping| mapping.map(&time_entry));
+                    let activity_id = activity_mapper.map(&time_entry);
                     let Some(activity_id) = activity_id else {
                         unmapped_entries.push(time_entry);
                         continue;
