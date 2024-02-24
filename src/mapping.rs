@@ -40,7 +40,9 @@ impl ActivityMapping {
         }
 
         match self.filter.description.as_ref() {
-            Some(description) if description != &entry.description => None,
+            Some(description) if description.to_lowercase() != entry.description.to_lowercase() => {
+                None
+            }
             _ => Some(self.activity_id.clone()),
         }
     }
