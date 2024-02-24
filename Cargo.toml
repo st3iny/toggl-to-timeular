@@ -2,6 +2,8 @@
 name = "toggl_to_timeular"
 version = "0.1.0"
 edition = "2021"
+description = "Migrate time entries from Toggl Track to Timeular"
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.80"

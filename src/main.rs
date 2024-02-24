@@ -16,7 +16,6 @@ mod mapping;
 mod timeular;
 mod toggl;
 
-/// Import time entries from Toggl to Timeular
 #[derive(clap::Parser)]
 #[command(version, about, long_about = None)]
 struct Args {
